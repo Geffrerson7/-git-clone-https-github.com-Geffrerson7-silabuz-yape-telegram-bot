@@ -19,7 +19,7 @@ def generate_random_numbers(random_numbers_quantity: int):
 def save_to_excel(numbers_list: list):
     """Saves a list of EAN codes to an Excel file."""
     df = pd.DataFrame({"EAN": numbers_list})
-    df.to_excel("./excel-files/ean_codes.xlsx", index=False)
+    df.to_excel("./excel-files/ean/ean_codes.xlsx", index=False)
 
 
 def escape_string(input_string: str):
