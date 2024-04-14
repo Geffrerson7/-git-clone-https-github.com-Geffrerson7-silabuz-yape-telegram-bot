@@ -9,7 +9,8 @@ import html
 import json
 from telegram.constants import ParseMode
 from common.log import logger
-from telegram.error import RetryAfter, BadRequest
+from telegram.error import RetryAfter
+import asyncio
 
 
 DEVELOPER_CHAT_ID = config.DEVELOPER_CHAT_ID
@@ -62,9 +63,39 @@ async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         await context.bot.send_message(
             chat_id=DEVELOPER_CHAT_ID, text=message, parse_mode=ParseMode.HTML
         )
-        
-        await update.message.reply_text(f"Hubo un error {type(context.error).__name__}. Por favor, inténtalo de nuevo.")
-            
+
+        error_class = type(context.error).__name__
+        if error_class == "BadRequest":
+            await update.message.reply_text(
+                text="Hubo un problema con la solicitud. Por favor, inténtalo de nuevo.",
+            )
+        elif error_class == "Forbidden":
+            await update.message.reply_text(
+                text="No estás autorizado para realizar esta acción.",
+            )
+        elif error_class == "RetryAfter":
+            retry_after_seconds = RetryAfter.retry_after
+            await asyncio.sleep(retry_after_seconds)
+            message = (
+                f"Se pausó temporalmente el envío de coordenadas debido a un límite de velocidad. "
+                f"Se reanudará automáticamente en {retry_after_seconds} segundos."
+            )
+            await update.message.reply_text(
+                text=message,
+            )
+        elif error_class == "TimedOut":
+            await update.message.reply_text(
+                text="El servidor no respondió a tiempo. Por favor, inténtalo más tarde.",
+            )
+        elif error_class == "AttributeError":
+            await update.message.reply_text(
+                text="Lo siento, ha ocurrido un problema al acceder a un atributo que no existe o no está definido. Por favor, inténtalo de nuevo más tarde.",
+            )
+        else:
+            await update.message.reply_text(
+                text=f"Hubo un error {error_class}. Por favor, inténtalo de nuevo."
+            )
+
     except Exception as e:
         print(f"Error en error_handler(): {e}")
 
@@ -76,6 +107,18 @@ async def unknown_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     message_text += "/menu - Explanatory menu.\n"
     await update.message.reply_text(message_text)
 
+
 async def bad_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Raise an error to trigger the error handler."""
-    await context.bot.wrong_method_name() 
+    message = (
+        f"*🄰* *Gulpin* ✨♂️\n"
+        f"*🄴* IV:💯 ᴄᴘ:569 LV:23\n"
+        f"⛰️Magnitud \| 🔘Látigo\n"
+        "*🌀☄️Tᴏᴘ💯Gᴀʟᴀxʏ☄️🌀*\n"
+        f"⌚ᴅsᴘ 4:05\n"
+        f"`51.56097605,-0.0102359`"
+    )
+    for i in range(0, 100):
+        await context.bot.send_message(
+            chat_id=DEVELOPER_CHAT_ID, text=message, parse_mode=ParseMode.MARKDOWN_V2
+        )
