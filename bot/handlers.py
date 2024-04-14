@@ -19,11 +19,14 @@ DEVELOPER_CHAT_ID = config.DEVELOPER_CHAT_ID
 async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user_name = update.effective_user.first_name
-    message_text = f"Hello {user_name}, I'm Yape Bot!\n"
+    message_text = f"Hello {user_name}, I'm Gef Bot!\n"
     message_text += "Here's an explanatory menu:\n\n"
-    message_text += "/start - Start the conversation with the bot.\n"
+    message_text += "/start_ean - EAN codes generation.\n"
+    message_text += "/start_des - Descriptions excel file edition.\n"
+    message_text += "/cancel_ean - Cancel EAN codes generation.\n"
+    message_text += "/cancel_des - Cancel descriptions excel file edition.\n"
 
-    keyboard = [["/start"]]
+    keyboard = [["/start_ean","start_des","/cancel_ean","/cancel_des"]]
     reply_markup = ReplyKeyboardMarkup(
         keyboard, one_time_keyboard=True, resize_keyboard=True
     )
@@ -103,22 +106,12 @@ async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 async def unknown_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     message_text = f"Sorry, the entered command is not valid.\n"
     message_text += "Here is the list of valid commands:\n\n"
-    message_text += "/start - Start the conversation with the bot.\n"
+    message_text += "/start_ean - EAN codes generation.\n"
+    message_text += "/start_des - Descriptions excel file edition.\n"
+    message_text += "/cancel_ean - Cancel EAN codes generation.\n"
+    message_text += "/cancel_des - Cancel descriptions excel file edition.\n"
     message_text += "/menu - Explanatory menu.\n"
     await update.message.reply_text(message_text)
 
 
-async def bad_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Raise an error to trigger the error handler."""
-    message = (
-        f"*🄰* *Gulpin* ✨♂️\n"
-        f"*🄴* IV:💯 ᴄᴘ:569 LV:23\n"
-        f"⛰️Magnitud \| 🔘Látigo\n"
-        "*🌀☄️Tᴏᴘ💯Gᴀʟᴀxʏ☄️🌀*\n"
-        f"⌚ᴅsᴘ 4:05\n"
-        f"`51.56097605,-0.0102359`"
-    )
-    for i in range(0, 100):
-        await context.bot.send_message(
-            chat_id=DEVELOPER_CHAT_ID, text=message, parse_mode=ParseMode.MARKDOWN_V2
-        )
+
