@@ -7,7 +7,7 @@ from telegram.ext import (
     filters,
 )
 from common.log import logger
-
+from bot.service import change_html_to_text
 
 EXCEL_FILE = range(1)
 
@@ -17,17 +17,34 @@ async def start_description(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     await update.message.reply_text(
         "Hi! My name is Gef Bot. I will hold a conversation with you. "
         "Send /cancel_des to stop talking to me.\n\n"
-        "Please, send me the Excel file with descriptions."
+        "Please, send me the Excel file with descriptions of up to 20MB in size."
     )
 
     return EXCEL_FILE
 
 
 async def excel_file(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-
+    user = update.message.from_user
+    if (
+        update.message.effective_attachment.mime_type
+        != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    ):
+        await update.message.reply_text("Please send an Excel file.")
+        return EXCEL_FILE
+    
     new_file = await update.message.effective_attachment.get_file()
     await new_file.download_to_drive("./excel-files/descriptions/description-html.xlsx")
+    logger.info("File of %s: %s", user.first_name, "description-html.xlsx")
     await update.message.reply_text("Excel file saved!")
+    change_html_to_text()
+    await context.bot.send_document(
+        chat_id=update.effective_chat.id,
+        document=open("./excel-files/descriptions/description-text.xlsx", "rb"),
+    )
+    await update.message.reply_text(
+        "The descriptions have been converted and stored in an description-text.xlsx."
+    )
+
     return ConversationHandler.END
 
 
