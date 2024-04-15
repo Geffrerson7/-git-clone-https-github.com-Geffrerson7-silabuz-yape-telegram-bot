@@ -53,9 +53,26 @@ Once all of that is done, proceed to start the app
 
 ## Telegram bot's menu
 
-Start the conversation with the bot:
+Start EAN codes generation:
 
 ```bash
-  /start
+  /start_ean
 ```
 
+Start descriptions excel file edition.:
+
+```bash
+  /start_des
+```
+
+Cancel EAN codes generation:
+
+```bash
+  /cancel_ean
+```
+
+Cancel descriptions excel file edition.:
+
+```bash
+  /cancel_des
+```
