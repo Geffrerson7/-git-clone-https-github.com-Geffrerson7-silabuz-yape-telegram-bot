@@ -23,8 +23,10 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message_text += "Here's an explanatory menu:\n\n"
     message_text += "/start_ean - EAN codes generation.\n"
     message_text += "/start_des - Descriptions excel file edition.\n"
+    message_text += "/start_img - Download images from excel file.\n"
     message_text += "/cancel_ean - Cancel EAN codes generation.\n"
     message_text += "/cancel_des - Cancel descriptions excel file edition.\n"
+    message_text += "/cancel_img - Cancel download images from excel file.\n"
 
     keyboard = [["/start_ean", "/start_des", "/cancel_ean", "/cancel_des"]]
     reply_markup = ReplyKeyboardMarkup(
@@ -108,7 +110,9 @@ async def unknown_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     message_text += "Here is the list of valid commands:\n\n"
     message_text += "/start_ean - EAN codes generation.\n"
     message_text += "/start_des - Descriptions excel file edition.\n"
+    message_text += "/start_img - Download images from excel file.\n"
     message_text += "/cancel_ean - Cancel EAN codes generation.\n"
     message_text += "/cancel_des - Cancel descriptions excel file edition.\n"
+    message_text += "/cancel_img - Cancel download images from excel file.\n"
     message_text += "/menu - Explanatory menu.\n"
     await update.message.reply_text(message_text)
