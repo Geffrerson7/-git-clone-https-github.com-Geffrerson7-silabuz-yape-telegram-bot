@@ -59,10 +59,16 @@ Start EAN codes generation:
   /start_ean
 ```
 
-Start descriptions excel file edition.:
+Start descriptions excel file edition:
 
 ```bash
   /start_des
+```
+
+Start download images from excel file:
+
+```bash
+  /start_img
 ```
 
 Cancel EAN codes generation:
@@ -71,8 +77,14 @@ Cancel EAN codes generation:
   /cancel_ean
 ```
 
-Cancel descriptions excel file edition.:
+Cancel descriptions excel file edition:
 
 ```bash
   /cancel_des
+```
+
+Cancel download images from excel file:
+
+```bash
+  /cancel_img
 ```

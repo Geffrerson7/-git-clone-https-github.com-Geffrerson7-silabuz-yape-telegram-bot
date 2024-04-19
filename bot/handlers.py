@@ -2,7 +2,6 @@ from telegram import Update
 from telegram.ext import (
     ContextTypes,
 )
-from telegram import ReplyKeyboardMarkup
 from settings import config
 import traceback
 import html
@@ -28,12 +27,7 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message_text += "/cancel_des - Cancel descriptions excel file edition.\n"
     message_text += "/cancel_img - Cancel download images from excel file.\n"
 
-    keyboard = [["/start_ean", "/start_des", "/cancel_ean", "/cancel_des"]]
-    reply_markup = ReplyKeyboardMarkup(
-        keyboard, one_time_keyboard=True, resize_keyboard=True
-    )
-
-    await update.message.reply_text(message_text, reply_markup=reply_markup)
+    await update.message.reply_text(message_text)
 
 
 async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
