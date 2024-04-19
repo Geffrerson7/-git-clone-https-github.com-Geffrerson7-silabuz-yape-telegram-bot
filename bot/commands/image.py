@@ -29,6 +29,7 @@ async def start_download_image(
 async def save_image_path(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     folder_path = update.message.text
     folder_path = folder_path.replace('"', "").replace("\\", "/")
+    print(folder_path)
     if not check_excel_path(folder_path):
         await update.message.reply_text("The path doesn't exist. Please, send me other path.")
         return FOLDER_PATH
