@@ -5,6 +5,7 @@ from PIL import Image
 from io import BytesIO
 from urllib.parse import urlparse
 
+
 def generate_random_numbers(random_numbers_quantity: int):
     """Generates a list of random EAN codes of 13 digits."""
     numbers = []
@@ -188,3 +189,7 @@ def create_excel_non_working_urls(archivo_excel, carpeta_destino):
         print(f"Se han guardado las URL que no funcionan en '{archivo_resultado}'.")
     except Exception as e:
         print(f"Error al procesar el archivo Excel: {e}")
+
+
+
+

@@ -19,13 +19,10 @@ async def start_ean(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     message_text += "/excel - Generate EAN codes as Excel file.\n"
     message_text += "/message - Generate EAN codes as message."
 
-    keyboard = [["/excel", "/message"]]
-    reply_markup = ReplyKeyboardMarkup(
-        keyboard, one_time_keyboard=True, resize_keyboard=True
-    )
+    await update.message.reply_text(message_text)
 
-    await update.message.reply_text(message_text, reply_markup=reply_markup)
     context.user_data["generate_method"] = None
+    
     return EAN_NUMBER
 
 
