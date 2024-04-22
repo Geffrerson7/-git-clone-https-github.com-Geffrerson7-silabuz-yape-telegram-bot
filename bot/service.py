@@ -191,5 +191,11 @@ def create_excel_non_working_urls(archivo_excel, carpeta_destino):
         print(f"Error al procesar el archivo Excel: {e}")
 
 
+def format_image_excel_file():
+    """Reads an Excel file with SKU and URL columns, groups the URLs by SKU, and saves the result to a new Excel file."""
+    df = pd.read_excel("./excel-files/format/raw-excel-file.xlsx")
 
+    df_grouped = df.groupby('SKU')['url'].apply(lambda x: '|'.join(x)).reset_index()
+
+    df_grouped.to_excel("./excel-files/format/formatted-excel-file.xlsx", index=False)
 
