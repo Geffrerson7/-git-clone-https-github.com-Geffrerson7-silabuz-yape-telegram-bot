@@ -16,7 +16,7 @@ RAW_IMAGE_EXCEL_FILE = range(1)
 async def start_format_image_excel_file(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> int:
-    """Starts the conversation and asks for the path of the folder where the images will be saved."""
+    """Starts the conversation and asks images Excel file."""
     user_name = update.effective_user.first_name
     await update.message.reply_text(
         f"Hi {user_name}. I will hold a conversation with you. "
@@ -30,6 +30,7 @@ async def start_format_image_excel_file(
 async def format_raw_image_excel_file(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> int:
+    """Save and format images Excel file."""
     user = update.message.from_user
     if (
         update.message.effective_attachment.mime_type
@@ -54,7 +55,7 @@ async def format_raw_image_excel_file(
     return ConversationHandler.END
 
 
-async def cancel_description(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+async def cancel_format_image_excel_file(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Cancels and ends the conversation."""
     user = update.message.from_user
     logger.info("User %s canceled the conversation.", user.first_name)
@@ -70,5 +71,5 @@ raw_image_excel_file_conv_handler = ConversationHandler(
             MessageHandler(filters.ATTACHMENT, format_raw_image_excel_file)
         ],
     },
-    fallbacks=[CommandHandler("cancel_format", cancel_description)],
+    fallbacks=[CommandHandler("cancel_format", cancel_format_image_excel_file)],
 )

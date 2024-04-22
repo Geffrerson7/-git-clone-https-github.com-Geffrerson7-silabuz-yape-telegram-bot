@@ -24,7 +24,7 @@ async def start_description(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     return DESCRIPTION_EXCEL_FILE
 
 
-async def excel_file(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+async def format_descriptions_excel_file(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user = update.message.from_user
     if (
         update.message.effective_attachment.mime_type
@@ -61,7 +61,7 @@ async def cancel_description(update: Update, context: ContextTypes.DEFAULT_TYPE)
 description_conv_handler = ConversationHandler(
     entry_points=[CommandHandler("start_des", start_description)],
     states={
-        DESCRIPTION_EXCEL_FILE: [MessageHandler(filters.ATTACHMENT, excel_file)],
+        DESCRIPTION_EXCEL_FILE: [MessageHandler(filters.ATTACHMENT, format_descriptions_excel_file)],
     },
     fallbacks=[CommandHandler("cancel_des", cancel_description)],
 )
