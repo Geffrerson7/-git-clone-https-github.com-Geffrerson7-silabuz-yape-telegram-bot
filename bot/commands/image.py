@@ -17,7 +17,7 @@ IMAGE_EXCEL_FILE = range(1)
 async def start_download_image(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> int:
-    """Starts the conversation and asks for the path of the folder where the images will be saved."""
+    """Starts the conversation and asks images Excel file."""
     user_name = update.effective_user.first_name
     await update.message.reply_text(
         f"Hi {user_name}. I will hold a conversation with you. "
