@@ -1,4 +1,4 @@
-# SILABUZ-YAPE-TELEGRAM-BOT
+# VTEX-WIZARD-TELEGRAM-BOT
 
 ## Local Installation
 
@@ -15,13 +15,13 @@ To run this project, you'll need to add the following environment variables to y
 Clone the project
 
 ```bash
-$ git clone https://github.com/Geffrerson7/silabuz-yape-telegram-bot.git
+$ git clone https://github.com/Geffrerson7/vtex-wizard-telegram-bot.git
 ```
 
 Navigate to the project directory
 
 ```bash
-$ cd silabuz-yape-telegram-bot
+$ cd vtex-wizard-telegram-bot
 ```
 
 Create a virtual environment
@@ -53,38 +53,17 @@ Once all of that is done, proceed to start the app
 
 ## Telegram bot's menu
 
-Start EAN codes generation:
 
-```bash
-  /start_ean
-```
-
-Start descriptions excel file edition:
-
-```bash
-  /start_des
-```
-
-Start download images from excel file:
-
-```bash
-  /start_img
-```
-
-Cancel EAN codes generation:
-
-```bash
-  /cancel_ean
-```
-
-Cancel descriptions excel file edition:
-
-```bash
-  /cancel_des
-```
-
-Cancel download images from excel file:
-
-```bash
-  /cancel_img
-```
+- `/start_ean` - EAN codes generation.
+- `/start_des_format` - Descriptions excel file edition.
+- `/start_img` - Download images from excel file.
+- `/start_format` - Format images Excel file.
+- `/start_key` - Keywords generation.
+- `/start_crop_image` - Crop image.
+- `/cancel_ean` - Cancel EAN codes generation.
+- `/cancel_des_format` - Cancel descriptions excel file edition.
+- `/cancel_img` - Cancel download images from excel file.
+- `/cancel_format` - Cancel format images Excel file.
+- `/cancel_key` - Cancel keywords generation.
+- `/cancel_crop_image` - Cancel crop image.
+- `/menu` - Explanatory menu.

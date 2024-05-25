@@ -4,6 +4,9 @@ from bs4 import BeautifulSoup
 from PIL import Image
 from io import BytesIO
 from urllib.parse import urlparse
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
 
 
 def generate_random_numbers(random_numbers_quantity: int):
@@ -30,27 +33,28 @@ def escape_string(input_string: str):
     """Replaces characters '-' with '\-', and characters '.' with '\.'"""
     return re.sub(r"[-.]", lambda x: "\\" + x.group(), input_string)
 
+
 def html_to_text(html):
     """Convert a snippet of HTML into plain text."""
-    soup = BeautifulSoup(html, 'html.parser')
+    soup = BeautifulSoup(html, "html.parser")
     return soup.get_text()
 
+
 def change_html_to_text():
-    """ Read an Excel file containing HTML in a specified column, convert that HTML into plain text
+    """Read an Excel file containing HTML in a specified column, convert that HTML into plain text
     using the html_to_text function, and save the result to a new Excel file."""
-    
+
     df = pd.read_excel("./excel-files/descriptions/description-html.xlsx")
 
     # Aplicar la función html_to_text a cada valor de la columna 'columna_html'
-    df['columna_texto'] = df['columna_html'].apply(html_to_text)
+    df["columna_texto"] = df["columna_html"].apply(html_to_text)
 
     # Guardar el DataFrame resultante en un nuevo archivo Excel
-    df.to_excel('./excel-files/descriptions/description-text.xlsx', index=False)
+    df.to_excel("./excel-files/descriptions/description-text.xlsx", index=False)
 
 
 def procesar_imagen(url, sku, carpeta_destino):
     """Function to download and process an image."""
-
     enlaces_separados = url.split("|")
 
     for i, enlace in enumerate(enlaces_separados, start=1):
@@ -105,7 +109,7 @@ def save_images_from_excel(archivo_excel, carpeta_destino):
     for index, fila in df.iterrows():
         enlaces_imagen = fila["url"]
         sku = fila["SKU"]
-        if not pd.isna(enlaces_imagen) and enlaces_imagen !="":
+        if not pd.isna(enlaces_imagen) and enlaces_imagen != "":
             procesar_imagen(enlaces_imagen, sku, carpeta_destino)
 
 
@@ -136,9 +140,11 @@ def check_url(url):
             return True
         elif response.status_code == 403:
             return 403
+        elif response.status_code == 404:
+            return 404
     except requests.ConnectionError:
         return False
-    
+
 
 def create_excel_non_working_urls(archivo_excel, carpeta_destino):
     """Reads an Excel file containing URLs, checks if they are valid and accessible, and saves the non-working URLs to a new Excel file."""
@@ -171,7 +177,15 @@ def create_excel_non_working_urls(archivo_excel, carpeta_destino):
                             {
                                 "SKU": sku,
                                 "URL": url,
-                                "Comentario": "URL válida, pero no se puede descargar con este programa sino de forma manual.",
+                                "Comentario": "La URL no existe o no se puede descargar con este programa sino de forma manual.",
+                            }
+                        )
+                    elif check_url(url) == 404:
+                        urls_no_funcionan.append(
+                            {
+                                "SKU": sku,
+                                "URL": url,
+                                "Comentario": "La URL no existe",
                             }
                         )
             else:
@@ -185,7 +199,7 @@ def create_excel_non_working_urls(archivo_excel, carpeta_destino):
 
         archivo_resultado = os.path.join(carpeta_destino, "failed_urls.xlsx")
         df_urls_no_funcionan.to_excel(archivo_resultado, index=False)
-
+        return len(urls_no_funcionan)
         print(f"Se han guardado las URL que no funcionan en '{archivo_resultado}'.")
     except Exception as e:
         print(f"Error al procesar el archivo Excel: {e}")
@@ -195,7 +209,123 @@ def format_image_excel_file():
     """Reads an Excel file with SKU and URL columns, groups the URLs by SKU, and saves the result to a new Excel file."""
     df = pd.read_excel("./excel-files/format/raw-excel-file.xlsx")
 
-    df_grouped = df.groupby('SKU')['url'].apply(lambda x: '|'.join(x)).reset_index()
+    df_grouped = df.groupby("SKU")["url"].apply(lambda x: "|".join(x)).reset_index()
 
     df_grouped.to_excel("./excel-files/format/formatted-excel-file.xlsx", index=False)
 
+
+
+def create_keywords_of_product_name(texto):
+    # Tokenizar el texto en palabras
+    palabras = word_tokenize(texto)
+
+    # Eliminar palabras vacías (palabras comunes como "el", "es", "y", etc.)
+    palabras_vacias = set(stopwords.words('spanish'))
+    palabras = [palabra.lower() for palabra in palabras if palabra.lower() not in palabras_vacias]
+
+    # Eliminar caracteres especiales usando expresiones regulares
+    palabras = [re.sub(r'[^a-zA-Z0-9áéíóúü]', '', palabra) for palabra in palabras]
+
+    # Eliminar cadenas vacías después de eliminar los caracteres especiales
+    palabras = [palabra for palabra in palabras if palabra]
+
+    # Contar la frecuencia de cada palabra
+    frecuencia_palabras = {}
+    for palabra in palabras:
+        frecuencia_palabras[palabra] = frecuencia_palabras.get(palabra, 0) + 1
+
+    # Ordenar las palabras por frecuencia en orden descendente
+    palabras_ordenadas = sorted(frecuencia_palabras.items(), key=lambda x: x[1], reverse=True)
+
+    # Devolver las 10 palabras clave principales (puedes ajustar este número según sea necesario)
+    return [palabra for palabra, _ in palabras_ordenadas[:20]]
+
+
+def create_keywords(texto, categoria):
+    if isinstance(texto, str):  # Verifica si el texto es una cadena de caracteres
+        texto = texto.replace("/", " ")
+        # Generar palabras clave utilizando la función generate_keywords
+        keywords = create_keywords_of_product_name(texto)
+        # Filtrar sustantivos y excluir palabras no deseadas
+        sustantivos = [
+            palabra
+            for palabra in keywords
+            if palabra not in [
+                "ml",
+                "–",
+                "gr",
+                "u",
+                "kg",
+                "pcs",
+                "piezas",
+                "pieza",
+                "cm",
+                "mm",
+                "w",
+                "l",
+                "m",
+                "unidad",
+                "unidades",
+                "und",
+                "unds",
+                "un",
+                "pa",
+            ]
+        ]
+        # Agregar la categoría como palabra clave
+        categoria_keywords = [categoria.lower()]
+        sustantivos.extend(categoria_keywords)
+        return ", ".join(sustantivos)
+    else:
+        return ""
+
+
+def generate_keywords_excel_file():
+    # Descarga los recursos necesarios de NLTK
+    nltk.download("punkt")
+    nltk.download("averaged_perceptron_tagger")
+    nltk.download('stopwords')
+
+    # Carga el archivo Excel
+    df = pd.read_excel("./excel-files/keywords/products-list.xlsx")
+
+    # Selecciona las columnas de interés
+    columna_nombre = "Nombre"
+    columna_categoria = "Categoria"
+
+    # Aplica la función a las columnas seleccionadas
+    df["keywords"] = df.apply(
+        lambda row: create_keywords(
+            row[columna_nombre], row[columna_categoria]
+        ),
+        axis=1,
+    )
+    # Guarda el resultado en un nuevo archivo Excel
+    df.to_excel("./excel-files/keywords/keywords-list.xlsx", index=False)
+
+
+def crop_margins(imagen_path, margen_inferior, margen_superior, margen_izquierda, margen_derecha):
+    # Abrir la imagen
+    imagen = Image.open(imagen_path)
+    
+    # Obtener dimensiones de la imagen
+    ancho, alto = imagen.size
+
+    # Definir el área a recortar (left, upper, right, lower)
+    izquierda = margen_izquierda
+    superior = margen_superior
+    derecha = ancho - margen_derecha
+    inferior = alto - margen_inferior
+
+    # Recortar la imagen
+    imagen_recortada = imagen.crop((izquierda, superior, derecha, inferior))
+
+    return imagen_recortada
+
+
+def save_cropped_image(margen_inferior, margen_superior, margen_izquierda, margen_derecha):
+    # Recortar la imagen
+    imagen_recortada = crop_margins("./media/images/image-to-crop.jpg", margen_inferior, margen_superior, margen_izquierda, margen_derecha)
+
+    # Guardar la imagen recortada
+    imagen_recortada.save('./media/images/cropped-image.jpg')

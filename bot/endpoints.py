@@ -4,11 +4,12 @@ from bot.ptb import ptb
 from http import HTTPStatus
 from settings import config
 
+
 router = APIRouter()
 
 @router.get("/")
 def home():
-    return "Hello, welcome to Yape Bot!"
+    return "Hello, welcome to Vtex-Wizard!"
 
 if config.DEBUG == "False":
     @router.get("/bot")
